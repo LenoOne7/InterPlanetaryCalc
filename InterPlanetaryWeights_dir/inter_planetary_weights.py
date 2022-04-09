@@ -6,7 +6,7 @@
 #               factor on the surface of the planet."
 
 import tkinter as tk
-from tkinter import PhotoImage, TOP
+from tkinter import PhotoImage
 
 # Variables
 nDICTCNVRSNFCTR = {
@@ -59,7 +59,7 @@ def introWin():
     # Intro main window
     mainWindw = tk.Tk()
     mainWindw.title("Inter Planetary Weights GUI - By Lennox Stampp")
-    mainWindw.config(bg="#0d0d0d")  # #0d0d0d color is a shade of black
+    mainWindw.config(bg="black")  # #0d0d0d color is a shade of black
     # main_win_width = mainWindw.winfo_screenwidth() #useless i think?? if so delete width from frames
 
     # Frames
@@ -72,15 +72,15 @@ def introWin():
         titleFrame,
         text="Inter Planetary Weights\nYour weight throughout the Solar System!",
         fg="yellow",
-        bg="#0d0d0d",
+        bg="black",
         justify="center"
     )
 
     # Entry frame widgets
     lblNameEntry = tk.Label(entryFrame, text="Enter your name:",
-                            fg="yellow", bg="#0d0d0d")
+                            fg="yellow", bg="black")
     lblWeightEntry = tk.Label(entryFrame, text="Enter your Earth weight(lbs):",
-                              fg="yellow", bg="#0d0d0d")
+                              fg="yellow", bg="black")
 
     # Entry fields
     entNameEntryField = tk.Entry(entryFrame, relief=tk.SUNKEN)
@@ -96,7 +96,9 @@ def introWin():
                                                 ckVars(aUserInfo),
                                                 mainWindw.destroy()],
                                bg="yellow",
-                               fg="black"
+                               fg="black",
+                               activebackground="black",
+                               activeforeground="yellow"
                                )
 
     # --Close button
@@ -104,7 +106,9 @@ def introWin():
                             text="Exit",
                             command=lambda: mainWindw.destroy(),
                             bg="yellow",
-                            fg="black"
+                            fg="black",
+                            activebackground="black",
+                            activeforeground="yellow"
                             )
 
     # Build out window
@@ -136,7 +140,7 @@ def dispWin():
     # Planet image dict
     imgPlanetImgDict = {"Mercury": "mercury_img2.png",
                         "Venus": "venus_img2.png",
-                        "Moon": "moon_im2.png",
+                        "Moon": "moon_img2.png",
                         "Earth": "earth_img2.png",
                         "Mars": "mars_img2.png",
                         "Jupiter": "jupiter_img2.png",
@@ -154,11 +158,14 @@ def dispWin():
 
     # Incremennt iIndxCurntPlnt
     def setNextIndx(event=None):
-        iIndxCurntPlnt.set(iIndxCurntPlnt.get() + 1)
+        if iIndxCurntPlnt.get() == 9:
+            iIndxCurntPlnt.set(0)
+        else:
+            iIndxCurntPlnt.set(iIndxCurntPlnt.get() + 1)
         sCurrentPlanet.set(sPlanetNamesIndxdList[iIndxCurntPlnt.get()])
         sTitleStr = aUserInfo[0] + " on " + sCurrentPlanet.get()
         lblHeading.config(text=sTitleStr)
-        sDispData = f"{sTitleStr}:\nWeight on {sCurrentPlanet.get()}:{'*' * 15}{nIntrPlntWtDict[sCurrentPlanet.get()]:,.{2}f}"
+        sDispData = f"{sTitleStr}:\nWeight on {sCurrentPlanet.get():<8}:{' . ' * 9:^12}{nIntrPlntWtDict[sCurrentPlanet.get()]:>10,.{2}f}lbs."
         txtDispArea.delete("1.0", tk.END)
         txtDispArea.insert(tk.END, sDispData)
         # txtDispArea.insert(tk.END, sCurrentPlanet.get())
@@ -171,7 +178,7 @@ def dispWin():
         sCurrentPlanet.set(sPlanetNamesIndxdList[iIndxCurntPlnt.get()])
         sTitleStr = aUserInfo[0] + " on " + sCurrentPlanet.get()
         lblHeading.config(text=sTitleStr)
-        sDispData = f"{sTitleStr}:\nWeight on {sCurrentPlanet.get()}:{'*' * 15}{nIntrPlntWtDict[sCurrentPlanet.get()]:,.{2}f}"
+        sDispData = f"{sTitleStr}:\nWeight on {sCurrentPlanet.get():<8}:{' . ' * 9:^12}{nIntrPlntWtDict[sCurrentPlanet.get()]:>10,.{2}f}lbs."
         txtDispArea.delete("1.0", tk.END)
         txtDispArea.insert(tk.END, sDispData)
         nextImg = tk.PhotoImage(master=lblPlanetImage, file=imgPlanetImgDict[sCurrentPlanet.get()])
@@ -180,11 +187,16 @@ def dispWin():
         lblPlanetImage.config(image=nextImg)
 
     def listAllData(event=None):
+        sHeading = f"{aUserInfo[0]}, here are your weights\non our Solar System's planets"
+        lblHeading.config(text=sHeading)
+        nextImg = tk.PhotoImage(master=lblPlanetImage, file="solar_system_img2.png")
+        lblPlanetImage.image = nextImg
+        lblPlanetImage.config(image=nextImg)
         txtDispArea.delete("1.0", tk.END)
         sLine1 = f"{aUserInfo[0]}'s weight on:\n"
         txtDispArea.insert(tk.END, sLine1)
         for key, val in nIntrPlntWtDict.items():
-            data = f"\n\t{key:<8}:{'÷' * 10:^12}{val:>8,.{2}f}\n"
+            data = f"\n\t{key:<8}:{' . ' * 5:^12}{val:>8,.{2}f}lbs.\n"
             txtDispArea.insert(tk.END, data)
 
     # Display window
@@ -193,16 +205,18 @@ def dispWin():
     dispWinw.config(bg="yellow", highlightbackground="yellow", highlightcolor="yellow", highlightthickness=10)
     #dispWin.geometry('1000x1000')
     winWidth = dispWinw.winfo_screenwidth()
+    winHeight = dispWinw.winfo_screenheight()
     # nWidth = int(winWidth/10)
     nWidth = 42
+    nheight = 10
 
     # Frames
     titleFrame = tk.Frame(dispWinw, bg="black", width=nWidth, highlightbackground="yellow", highlightcolor="yellow",
                           highlightthickness=5)
     imageFrame = tk.Frame(dispWinw, bg="black", width=nWidth, highlightbackground="yellow", highlightcolor="yellow",
                           highlightthickness=5)
-    dataDispFrame = tk.Frame(dispWinw, width=nWidth, highlightbackground="yellow", highlightcolor="yellow",
-                             highlightthickness=5)
+    dataDispFrame = tk.Frame(dispWinw, height=nheight, width=nWidth, highlightbackground="yellow",
+                             highlightcolor="yellow", highlightthickness=5, pady=2)
     buttonFrame = tk.Frame(dispWinw, width=nWidth, bg="black")
 
     # Title frame widget
@@ -218,28 +232,31 @@ def dispWin():
     lblPlanetImage.config(image=imgCurentImg)
 
     # Data display frame widget
-    sDispData = f"{sTitleStr}:\nWeight on {sCurrentPlanet.get()}:{'*' * 15}{nIntrPlntWtDict[sCurrentPlanet.get()]:,.{2}f}"
-    txtDispArea = tk.Text(dataDispFrame, bg="black", fg="yellow", width=nWidth)
+    sDispData = f"{sTitleStr}:\nWeight on {sCurrentPlanet.get():<8}:{'. ' * 9:^12}{nIntrPlntWtDict[sCurrentPlanet.get()]:>10,.{2}f}lbs."
+    txtDispArea = tk.Text(dataDispFrame, bg="black", fg="yellow", width=nWidth, height=nheight)
     txtDispArea.insert(tk.END, sDispData)
 
     # Button frame widgets
-    btnPrev = tk.Button(buttonFrame, text="Prev",fg="black", bg="yellow", activebackground="black", activeforeground="yellow")
+    btnPrev = tk.Button(buttonFrame, text="Prev",fg="black", bg="yellow",
+                        activebackground="black", activeforeground="yellow")
     btnPrev.bind('<ButtonPress>', lambda event: setPrevIndx(event))
-    btnNext = tk.Button(buttonFrame, text="Next",fg="black", bg="yellow", activebackground="black", activeforeground="yellow")
+    btnNext = tk.Button(buttonFrame, text="Next",fg="black", bg="yellow",
+                        activebackground="black", activeforeground="yellow")
     btnNext.bind('<ButtonPress>', lambda event: setNextIndx(event))
-    btnList = tk.Button(buttonFrame, text="List All",fg="black", bg="yellow", activebackground="black", activeforeground="yellow")
+    btnList = tk.Button(buttonFrame, text="List All",fg="black", bg="yellow",
+                        activebackground="black", activeforeground="yellow")
     btnList.bind('<ButtonPress>', lambda event: listAllData(event))
     btnExit = tk.Button(buttonFrame, text="Exit", command=lambda: dispWinw.destroy(),fg="black", bg="yellow",
                         activebackground="black", activeforeground="yellow")
 
     # Build window
+    buttonFrame.pack(side="bottom", fill="both", pady=5)
     titleFrame.pack(fill="both")
     lblHeading.pack()
     imageFrame.pack(fill="x")
     lblPlanetImage.pack()
     dataDispFrame.pack(fill="both")
     txtDispArea.pack(fill="x")
-    buttonFrame.pack(side= "bottom", fill="both")
     btnPrev.pack(side="left")
     btnNext.pack(side="left")
     btnList.pack(side="left")
